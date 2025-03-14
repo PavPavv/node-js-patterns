@@ -1,5 +1,8 @@
 import fs from 'fs';
 import zlib from 'zlib';
+import { pipeline, PassThrough } from 'stream';
+
+import { Profiler } from '../utils-classes/index.js';
 
 /*
 Gzip Compression
@@ -69,7 +72,6 @@ function isOptName(name) {
 
 function main() {
   const OPT_TYPE_STR = '--type';
-  const start = Date.now();
   const filePath = process.argv[2];
   const flag = process.argv[3];
   const optName = process.argv[4];
@@ -108,30 +110,40 @@ function main() {
     }
   }
 
-  fs.stat(filePath, (err, stat) => {
-    if (err) {
-      console.error(`An error occurred while checking file size`);
-      process.exit(1);
-    }
+  console.log('algorithmName: ', algorithmName);
 
-    console.log(`Input file size: ${stat.size}`);
-    console.log(`Chosen algorithm: ${algorithmName}`);
-
-    const chosenAlgorithm = ALGORITHMS.find((a) => a.name === algorithmName);
-    const inputStream = fs.createReadStream(filePath);
-    // Compression begins
-    inputStream
-      .pipe(chosenAlgorithm.method)
-      .pipe(fs.createWriteStream(chosenAlgorithm.outputName))
-      .on('error', () => {
-        console.error('An error occurred while compression or writing file');
-      })
-      .on('finish', () => {
-        console.log(`File successfully compressed with ${algorithmName} compression algorithm!`);
-      })
-  
-    const end = Date.now();
-    console.log(`Compression done in >>> ${end - start} ms.`)
+  let bitesRead = 0;
+  const readThrough = new PassThrough();
+  readThrough.on('data', (chunk) => {
+    bitesRead += chunk.length;
   });
+
+  let bitesWritten = 0;
+  const monitor = new PassThrough();
+  monitor.on('data', (chunk) => {
+    bitesWritten += chunk.length;
+  });
+  const chosenAlgorithm = ALGORITHMS.find((a) => a.name === algorithmName);
+  const profiler = new Profiler(chosenAlgorithm.name);
+  const cb = (err) => {
+    if (err) {
+      console.error('An error occurred while compression or writing file');
+    }
+    console.log('-'.repeat(50));
+    profiler.end();
+    console.log(`Input file with the size of ${Number(bitesRead  / (1024 * 1024)).toFixed(2)} Mb been compressed.`);
+    profiler.printResult();
+    console.log(`Total size is ${Number(bitesWritten  / (1024 * 1024)).toFixed(2)} Mb`);
+  }
+
+  profiler.start();
+  pipeline(
+    fs.createReadStream(filePath),
+    readThrough,
+    chosenAlgorithm.method,
+    monitor,
+    fs.createWriteStream(chosenAlgorithm.outputName),
+    cb
+  );
 }
 main();

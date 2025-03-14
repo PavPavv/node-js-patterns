@@ -78,14 +78,17 @@ function main() {
     {
       name: 'gzip',
       method: zlib.createGzip(),
+      outputName: 'archive.gz'
     },
     {
       name: 'brotli',
       method: zlib.createBrotliCompress(),
+      outputName: 'archive.br'
     },
     {
       name: 'deflate',
       method: zlib.createDeflate(),
+      outputName: 'archive.zip'
     }
   ];
   let algorithmName = ALGORITHMS[0].name;
@@ -120,7 +123,7 @@ function main() {
     // Compression begins
     inputStream
       .pipe(chosenAlgorithm.method)
-      .pipe(fs.createWriteStream('archived.gz'))
+      .pipe(fs.createWriteStream(chosenAlgorithm.outputName))
       .on('error', () => {
         console.error('An error occurred while compression or writing file');
       })
