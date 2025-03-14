@@ -1,0 +1,24 @@
+{
+  "name": "my-node-js-start",
+  "version": "0.0.1",
+  "description": "My study nodejs project to explore modern nodejs capacities.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "nodeJS",
+    "node.js"
+  ],
+  "author": " <pavpavdev@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parse": "^5.6.0",
+    "pumpify": "^2.0.1",
+    "split": "^1.0.1",
+    "superagent": "^10.1.1"
+  }
+}
