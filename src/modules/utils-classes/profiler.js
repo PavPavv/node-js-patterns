@@ -1,6 +1,6 @@
 export class Profiler {
-  startTime = 0;
-  finishTime = 0;
+  _startTime = 0;
+  _finishTime = '';
 
   constructor(label) {
     this.label = label;
@@ -11,16 +11,41 @@ export class Profiler {
   }
 
   end() {
-    const endTime = process.hrtime.bigint();
-    const diff = endTime - this.startTime;
-    this.finishTime = diff / BigInt(1000000);
+    const diff = process.hrtime(this._startTime);
+    this._finishTime = `${diff[0]}s and ${diff[1]}ns`
   }
 
+  // end() {
+  //   const endTime = process.hrtime.bigint();
+  //   const diff = endTime - this._startTime;
+  //   this._finishTime = diff / BigInt(1000000);
+  // }
+
   get result() {
-    return this.finishTime;
+    return this._finishTime;
   }
 
   printResult() {
-    console.log(`${this.label} done in ${this.finishTime}ms`);
+    console.log(`${this.label} done in ${this._finishTime}ms`);
   }
 }
+
+const noopProfiler = {
+  start() {},
+  end() {},
+  get result() {
+    return '';
+  }
+}
+
+// Factory:
+export function createProfiler(label) {
+  if (process.env.NODE_ENV === 'production') {
+    return noopProfiler;
+  }
+  return new Profiler(label);
+  // or some branched logic for creating new Profiler
+}
+
+// const profiler = createProfiler('some title')
+

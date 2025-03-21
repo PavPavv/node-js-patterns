@@ -10,16 +10,12 @@ function main() {
   const clients = [];
 
   const serverTCP = net.createServer((socket) => {
-    console.log('socket: ', socket);
+
     clients.push(socket);
     socket.on('data', (data) => {
       clients.forEach((client) => {
         client.write(data);
       });
-
-      // const file = data.toString();
-      // const filePath = path.join(__dirname, '/received/data.txt')
-      // fs.createWriteStream(filePath).write(data);
     });
     socket.on('close', () => {
       console.log('Closed.');
