@@ -12,14 +12,15 @@ import { parse } from 'csv-parse';
   Every question is a Transform stream
 */
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const createCsvParser = () => {
   return parse({
     columns: (header) => header.map(h => h.trim().replace(/"/g, '')),
     trim: true,
+    skip_records_with_error: true,
   });
 };
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 class FilterByOccupation extends Transform {
   constructor(occupation, options = {}) {
@@ -68,50 +69,41 @@ class OutputHandler extends Writable {
   }
 
   _write(chunk, enc, cb) {
-    console.log(`Result! ${this.message} ${chunk.toString()}`);
+    console.log(`Result is ready! ${this.message} ${chunk.toString()}`);
     cb();
   }
 }
 
-export const sleepAnalyzer = (role) => {
-  const start = Date.now();
+export const sleepAnalyzer1 = (role) => {
   const filePath = path.join(__dirname, './Sleep_health_and_lifestyle_dataset.csv');
-  
   const readDataStream = fs.createReadStream(filePath);
   const csvParser = createCsvParser();
   csvParser.setMaxListeners(20);
+  const cb = (err) => {
+    if (err) {
+      console.error(`Pipeline failed with an error: ${err}`);
+      process.exit(1);
+    }
+  };
 
+  // What average sleep duration of Software Engineers?
   pipeline(
     readDataStream,
     csvParser,
     new FilterByOccupation(role),
     new AverageValueByCol('Sleep Duration'),
     new OutputHandler(`${role}s average sleep duration in hours is: `),
-    (err) => {
-      if (err) {
-        console.error(`Pipeline failed with an error: ${err}`);
-        process.exit(1);
-      }
-      const end = Date.now();
-      console.log(`Successfully done in ${end - start}ms!`);
-      csvParser.removeAllListeners(); 
-    },
+    cb,
   );
 
+  // What average quality of sleep of Software Engineers?
   pipeline(
     readDataStream,
     csvParser,
     new FilterByOccupation(role),
     new AverageValueByCol('Quality of Sleep'),
     new OutputHandler(`${role}s quality of sleeping (scale: 1-10) is: `),
-    (err) => {
-      if (err) {
-        console.error(`Pipeline failed with an error: ${err}`);
-        process.exit(1);
-      }
-      const end = Date.now();
-      console.log(`Successfully done in ${end - start}ms!`);
-      csvParser.removeAllListeners(); 
-    },
+    cb,
   );
+
 };

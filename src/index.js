@@ -11,7 +11,8 @@ import {
   asyncRecursiveFind,
   streamConcatFiles,
   monitorUrls,
-  sleepAnalyzer
+  sleepAnalyzer,
+  sleepAnalyzer1
 } from './modules/index.js';
 
 function main() {
@@ -122,7 +123,9 @@ function main() {
 
   // monitorUrls(path.join(__dirname, './modules/homework3/data/urls.txt'));
 
-  sleepAnalyzer('Software Engineer');
+  // sleepAnalyzer('Software Engineer');
   // sleepAnalyzer('Engineer');
+  sleepAnalyzer1('Software Engineer');
+  sleepAnalyzer1('Engineer');
 }
 main();

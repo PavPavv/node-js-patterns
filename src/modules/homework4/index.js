@@ -1,1 +1,1 @@
-export { sleepAnalyzer } from './sleepAnalyzer.js';
+export * from './sleep-analyzer/index.js';

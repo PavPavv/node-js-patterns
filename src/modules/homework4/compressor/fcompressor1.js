@@ -2,7 +2,7 @@ import fs from 'fs';
 import zlib from 'zlib';
 import { pipeline, PassThrough } from 'stream';
 
-import { Profiler } from '../utils-classes/index.js';
+import { Profiler } from '../../utils-classes/index.js';
 
 /*
 Gzip Compression
@@ -110,7 +110,6 @@ function main() {
     }
   }
 
-  console.log('algorithmName: ', algorithmName);
 
   let bitesRead = 0;
   const readThrough = new PassThrough();
@@ -123,11 +122,12 @@ function main() {
   monitor.on('data', (chunk) => {
     bitesWritten += chunk.length;
   });
+  
   const chosenAlgorithm = ALGORITHMS.find((a) => a.name === algorithmName);
   const profiler = new Profiler(chosenAlgorithm.name);
   const cb = (err) => {
     if (err) {
-      console.error('An error occurred while compression or writing file');
+      console.error('An error occurred while compression or writing file: ', err);
     }
     console.log('-'.repeat(50));
     profiler.end();
