@@ -12,7 +12,9 @@ import {
   streamConcatFiles,
   monitorUrls,
   sleepAnalyzer,
-  sleepAnalyzer1
+  sleepAnalyzer1,
+  createColorConsole,
+  RequestBuilder
 } from './modules/index.js';
 
 function main() {
@@ -125,7 +127,19 @@ function main() {
 
   // sleepAnalyzer('Software Engineer');
   // sleepAnalyzer('Engineer');
-  sleepAnalyzer1('Software Engineer');
-  sleepAnalyzer1('Engineer');
+  // sleepAnalyzer1('Software Engineer');
+  // sleepAnalyzer1('Engineer');
+
+  // const red = createColorConsole('red').log('Test!');
+  // const blue = createColorConsole('blue').log('Test!');
+  // const green = createColorConsole('green').log('Test!');
+
+  const req = new RequestBuilder()
+                    .setMethod('POST')
+                    .setUrl('google.com')
+                    .setQuery('?search=funny')
+                    .setBody('Some data here!')
+                    .build();
+  console.log(req.mockRequest());
 }
 main();
