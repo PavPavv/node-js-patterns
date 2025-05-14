@@ -134,12 +134,12 @@ function main() {
   // const blue = createColorConsole('blue').log('Test!');
   // const green = createColorConsole('green').log('Test!');
 
-  const req = new RequestBuilder()
-                    .setMethod('POST')
-                    .setUrl('google.com')
-                    .setQuery('?search=funny')
-                    .setBody('Some data here!')
-                    .build();
-  console.log(req.mockRequest());
+  // const req = new RequestBuilder()
+  //                   .setMethod('POST')
+  //                   .setUrl('google.com')
+  //                   .setQuery('?search=funny')
+  //                   .setBody('Some data here!')
+  //                   .build();
+  // console.log(req.mockRequest());
 }
 main();
