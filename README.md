@@ -11,3 +11,5 @@
 5. Dependency injection (pass module into constructor and init its instance somewhere in the current class afterwards)
 
 ### Structural patterns
+
+1. Proxy (surrogate) (see ./module8/calculator.js)
