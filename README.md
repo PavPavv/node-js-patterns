@@ -14,4 +14,4 @@
 
 1. Proxy (surrogate) (see ./module8/calculator.js)
 2. Decorator (see ./module8/calculator.js)
-3. Adapter ()
+3. Adapter
