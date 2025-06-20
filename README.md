@@ -26,6 +26,6 @@
 1. (11) Strategy (see ./module9/multi-config)
 2. (12) State (see ./module9/failsafe-socket)
 3. (13) Template (see ./module9/config-template)
-4. (14) Iterator
+4. (14) Iterator (see ./module9/iterator)
 5. (15) Middleware
 6. (16) Command
