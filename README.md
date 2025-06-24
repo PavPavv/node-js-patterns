@@ -27,5 +27,6 @@
 2. (12) State (see ./module9/failsafe-socket)
 3. (13) Template (see ./module9/config-template)
 4. (14) Iterator (see ./module9/iterator)
-5. (15) Middleware
-6. (16) Command
+5. (15) Middleware (see ./module9/middleware/0-mq-messenger)
+6. (16) Command (see ./module9/command/status-service)
+    - 6.1 Task pattern (see ./module9/command/task.js)

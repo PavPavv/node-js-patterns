@@ -1,11 +1,7 @@
 'use strict';
-
-import { fileURLToPath } from 'url';
-import path from 'path';
 import fs from 'fs';
 import objectPath from 'object-path';
 
-const __filename = fileURLToPath(import.meta.url);
 
 export class Config {
   constructor(formatStrategy) {
