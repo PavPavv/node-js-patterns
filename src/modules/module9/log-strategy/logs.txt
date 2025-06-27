@@ -1,0 +1,4 @@
+FILE debug: File test data
+FILE info: File test data
+FILE warn: File test data
+FILE error: File test data
