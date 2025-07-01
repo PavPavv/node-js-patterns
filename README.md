@@ -1,5 +1,7 @@
 # my-node-js-study
 
+> Examples and lessons from "Node.js design patterns: third edition, 2020" by M. Casciaro and L.Mammino
+
 ## Design patterns
 
 ### Node.js patterns
