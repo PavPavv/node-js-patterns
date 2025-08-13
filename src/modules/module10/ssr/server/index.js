@@ -6,9 +6,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import htm from 'htm';
 import { createElement } from 'react';
-// import { StaticRouter } from 'react-router-dom/server';
-// import reactServer from 'react-dom/server.js';
-// import { App } from '../client/src/app';
+import { StaticRouter } from 'react-router-dom/server';
+import reactServer from 'react-dom/server.js';
+import { App } from '../client/src/app';
 
 function main() {
   const __filename = fileURLToPath(import.meta.url);
@@ -34,72 +34,57 @@ function main() {
     `;
   };
 
-  const hoku1 = http.createServer((req, res) => {
+  const hoku3 = http.createServer((req, res) => {
     console.log('Request URL: ', req.url);
-    // Map the request URL to a file in the static directory
-    let filePath = path.join(staticDir, req.url);
+   
+    if (req.url.startsWith('/build/')) {
+      const BUILD_DIR = path.resolve(__dirname, '..', '/client/build');
+      const relativePath = req.url.substring('/build/'.length);
+      const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, '');
+      const filePath = path.join(BUILD_DIR, safePath);
 
-    // Handle root URL separately to serve index.html
-    if (req.url === '/' || req.url === '') {
-      filePath = path.join(staticDir, 'index.html');
+      fs.stat(filePath, (err, stats) => {
+        if (err || !stats.isFile()) {
+          res.statusCode = 404;
+          res.end('File not found');
+          return;
+        }
+
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeTypes = {
+          '.html': 'text/html',
+          '.js': 'application/javascript',
+          '.css': 'text/css',
+          '.png': 'image/png',
+          '.jpg': 'image/jpeg',
+          '.gif': 'image/gif',
+        };
+        res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
+        const readStream = fs.createReadStream(filePath);
+        readStream.pipe(res);
+      });
+    } else {
+      res.statusCode = 404;
+      res.end('File not found');
     }
-
-    // fs.stat(filePath, (err, stats) => {
-    //   if (err || !stats.isFile()) {
-    //     // If file doesn't exist, respond with 404
-    //     res.statusCode = 404;
-    //     res.setHeader('Content-Type', 'text/plain');
-    //     res.end('Not Found');
-    //     return;
-    //   }
-
-    //   // Set correct Content-Type based on file extension
-    //   const ext = path.extname(filePath).toLowerCase();
-    //   const mimeTypes = {
-    //     '.html': 'text/html',
-    //     '.js': 'application/javascript',
-    //     '.css': 'text/css',
-    //     '.json': 'application/json',
-    //     '.png': 'image/png',
-    //     '.jpg': 'image/jpeg',
-    //     '.jpeg': 'image/jpeg',
-    //     '.gif': 'image/gif',
-    //     '.svg': 'image/svg+xml',
-    //     // add more mime types if needed
-    //   };
-    //   const contentType = mimeTypes[ext] || 'application/octet-stream';
-
-    //   // Read and serve the file
-    //   fs.readFile(filePath, (err, data) => {
-    //     if (err) {
-    //       res.statusCode = 500;
-    //       res.setHeader('Content-Type', 'text/plain');
-    //       res.end('Internal Server Error');
-    //       return;
-    //     }
-    //     res.statusCode = 200;
-    //     res.setHeader('Content-Type', contentType);
-    //     res.end(data);
-    //   });
-    // });
 
     // handle any GET request
     if (req.method === 'GET') {
       console.log('GET request, ', req.method);
       
-      // const serverApp = html`
-      //   <${StaticRouter} location=${req.url}>
-      //     <${App}/>
-      //   </>
-      // `;
-      // const preparedContent = reactServer.renderToString(serverApp);
-      // const responseHtml = template({ content: preparedContent });
-      // // send response with prepared html
-      // res.writeHead(200, {
-      //   'Content-Type': 'text/html',
-      //   'x-custom-header': 'hello from Hoku-1',
-      // });
-      // res.end(responseHtml);
+      const serverApp = html`
+        <${StaticRouter} location=${req.url}>
+          <${App}/>
+        </>
+      `;
+      const preparedContent = reactServer.renderToString(serverApp);
+      const responseHtml = template({ content: preparedContent });
+      // send response with prepared html
+      res.writeHead(200, {
+        'Content-Type': 'text/html',
+        'x-custom-header': 'hello from Hoku-1',
+      });
+      res.end(responseHtml);
 
     } else {
       res.statusCode = 500;
@@ -108,12 +93,12 @@ function main() {
     }
   });
 
-  hoku1.on('error', (err) => {
+  hoku3.on('error', (err) => {
     res.statusCode = 500;
     console.error('\x1b[31m', `Server error: ${err}`, '\x1b[0m');
   });
 
-  hoku1.listen(PORT, ADDRESS, () => {
+  hoku3.listen(PORT, ADDRESS, () => {
     console.log('\x1b[45m', '\x1b[33m', 'HOKU-3 welcomes you!', '\x1b[0m')
     console.log('\x1b[33m', `HOKU-3 server now is running on: ${ADDRESS}:${PORT}`, '\x1b[0m');
   });
