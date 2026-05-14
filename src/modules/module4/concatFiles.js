@@ -1,7 +1,6 @@
 import fs from 'fs';
 
 export const concatFiles = (dest, files, cb) => {
-  console.log('dest', dest);
   fs.writeFile(dest, '', { flag: 'w' }, (err) => {
     if (err) {
       return cb(`An error while cleaning up the bundle ${err}`);
