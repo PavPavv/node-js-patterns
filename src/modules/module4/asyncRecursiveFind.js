@@ -18,6 +18,7 @@ const getSearch = async (dir, searchText) => {
         }
       } else if (stats.isDirectory()) {
         const subDirFiles = await getSearch(namePath, searchText);
+        // most hard part to understand
         targetFiles.push(...subDirFiles);
       }
     }
